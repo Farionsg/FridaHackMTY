@@ -1,12 +1,3 @@
-import os
-from softtek_llm.chatbot import Chatbot
-from softtek_llm.models import OpenAI
-from softtek_llm.cache import Cache
-from softtek_llm.vectorStores import PineconeVectorStore
-from softtek_llm.embeddings import OpenAIEmbeddings
-from softtek_llm.schemas import Filter
-from dotenv import load_dotenv
-
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if OPENAI_API_KEY is None:
@@ -34,7 +25,6 @@ if PINECONE_ENVIRONMENT is None:
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 if PINECONE_INDEX_NAME is None:
     raise ValueError("PINECONE_INDEX_NAME not found in .env file")
-
 vector_store = PineconeVectorStore(
     api_key=PINECONE_API_KEY,
     environment=PINECONE_ENVIRONMENT,
@@ -57,46 +47,21 @@ model = OpenAI(
     api_base=OPENAI_API_BASE,
     verbose=True,
 )
-"""filters = [
-    Filter(
-        type="DENY",
-        case="ANYTHING that doesnt talk about python.",
-    )
-]"""
 filters = [
     Filter(
         type="DENY",
         case="ANYTHING about the Titanic. YOU CANNOT talk about the Titanic AT ALL.",
     )
 ]
-
 chatbot = Chatbot(
     model=model,
-    description="You are a very intelligent chatbot",
+    description="You are a very helpful and polite chatbot",
     filters=filters,
-    #cache=cache,
+    cache=cache,
     verbose=True,
 )
-response1 = chatbot.chat(
-   " I program with python using .py files",
-    print_cache_score=True,
-    cache_kwargs={"namespace": "chatbot-test"},
-)
-
-response2 = chatbot.chat(
-   "what language do i have to use for a .py file",
-    print_cache_score=True,
-    cache_kwargs={"namespace": "chatbot-test"},
-)
-
-print(response2)
-
-
-""""""
-""""
 response = chatbot.chat(
     "Hello! My name is Jeff.",
     print_cache_score=True,
     cache_kwargs={"namespace": "chatbot-test"},
 )
-"""
